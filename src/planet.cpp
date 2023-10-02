@@ -1,6 +1,6 @@
 #include <planet.h>
 
-Planet::Planet() {
+Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass) {
 	std::vector<float> verticesTemp = generateSphere(20, 20, 1);
 	vertices = new float[verticesTemp.size()];
 	verticesSize = verticesTemp.size();
@@ -8,6 +8,11 @@ Planet::Planet() {
 	for (int i = 0; i < verticesTemp.size(); i++) {
 		vertices[i] = verticesTemp[i];
 	}
+
+	this->position = pos;
+	this->direction = glm::normalize(dir);
+	this->stationary = stationary;
+	this->mass = mass;
 }
 
 float* Planet::getVertices() {
@@ -16,6 +21,37 @@ float* Planet::getVertices() {
 
 int Planet::getVerticesSize() {
 	return verticesSize;
+}
+
+glm::vec3 Planet::getPosition() {
+	return position;
+}
+
+bool Planet::getStationary() {
+	return stationary;
+}
+
+int Planet::getMass() {
+	return mass;
+}
+
+void Planet::applyPhysics(std::vector<Planet*> others) {
+	float gravitationalConstant = 6.67430e-10;
+	for (int i = 0; i < others.size(); i++) {
+		if (others[i] != this) {
+			glm::vec3 dist = others[i]->getPosition() - position;
+			glm::vec3 attractionDir = glm::normalize(dist);
+			float magnitude = (gravitationalConstant * others[i]->getMass() * mass) / (glm::length(dist) * glm::length(dist));
+			attractionDir *= magnitude;
+			direction += attractionDir;
+
+		}
+	}
+	position += direction * 0.1f;
+}
+
+Planet::~Planet() {
+	delete[] vertices;
 }
 
 std::vector<float> Planet::generateSphere(int latLines, int longLines, float radius) {

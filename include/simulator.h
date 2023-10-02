@@ -5,7 +5,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <camera.h>
-#include <buffer.h>
 #include <planet.h>
 #include <renderer.h>
 
@@ -16,18 +15,25 @@ public:
 	void setupSim();
 	void runSim();
 	void endSim();
-
+	~Simulator();
 private:
 	int screenW;
 	int screenH;
+	static bool firstMouse;
+	static float lastX;
+	static float lastY;
 	float deltaTime;
 	float lastFrame;
-	std::vector<Planet> planets;
+	float lastSpawnTime;
+	std::vector<Planet*> planets;
 	GLFWwindow* window;
-	Camera* camera;
+	static Camera* camera;
 	Renderer* renderer;
-	void update();
+	void updateAndRender();
 	void initOpenGL();
-	void processInput(GLFWwindow* window);
+	void spawnPlanet();
+	void processInput(GLFWwindow* window, float curFrame);
 	static void frameSizeCallback(GLFWwindow* window, int width, int height);
+	static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
+	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
 };

@@ -3,7 +3,6 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <planet.h>
-#include <buffer.h>
 #include <shader.h>
 #include <camera.h>
 
@@ -15,7 +14,7 @@
 class Renderer {
 public:
 	Renderer();
-	void render(Planet& p, Camera& cam);
+	void render(Planet* p, Camera& cam);
 private:
 	void init();
 	unsigned int VAO;

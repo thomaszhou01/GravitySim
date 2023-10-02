@@ -4,18 +4,19 @@ Renderer::Renderer() {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void Renderer::render(Planet &p, Camera& cam) {
+void Renderer::render(Planet *p, Camera& cam) {
 	shader->use();
 	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, p->getPosition());
 	shader->setMat4("model", model);
-	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)800 / (float)800, 0.1f, 100.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)800 / (float)800, 0.1f, 10000.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	shader->setMat4("projection", projection);
 	shader->setMat4("view", view);
 
 	glBindVertexArray(VAO);
-	glBufferData(GL_ARRAY_BUFFER, p.getVerticesSize() * sizeof(float), &(p.getVertices())[0], GL_STATIC_DRAW);
-	glDrawArrays(GL_TRIANGLES, 0, p.getVerticesSize()/8);
+	glBufferData(GL_ARRAY_BUFFER, p->getVerticesSize() * sizeof(float), &(p->getVertices())[0], GL_STATIC_DRAW);
+	glDrawArrays(GL_TRIANGLES, 0, p->getVerticesSize()/8);
 }
 
 void Renderer::init() {
