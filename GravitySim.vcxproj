@@ -137,16 +137,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\buffer.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\planet.cpp" />
+    <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\simulator.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\buffer.h" />
     <ClInclude Include="include\camera.h" />
+    <ClInclude Include="include\planet.h" />
+    <ClInclude Include="include\renderer.h" />
     <ClInclude Include="include\shader.h" />
+    <ClInclude Include="include\simulator.h" />
     <ClInclude Include="include\stb_image.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="assets\shader.fs" />
+    <None Include="assets\shader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
