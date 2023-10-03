@@ -26,6 +26,7 @@ private:
 	float lastFrame;
 	float lastSpawnTime;
 	std::vector<Planet*> planets;
+	std::vector<Planet*> suns;
 	GLFWwindow* window;
 	static Camera* camera;
 	Renderer* renderer;

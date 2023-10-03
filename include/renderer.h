@@ -14,9 +14,12 @@
 class Renderer {
 public:
 	Renderer();
-	void render(Planet* p, Camera& cam);
+	void render(Planet* p, std::vector<Planet*> suns, Camera& cam);
+	~Renderer();
 private:
 	void init();
+	void addLight();
 	unsigned int VAO;
 	Shader* shader;
+	Shader* shaderSun;
 };

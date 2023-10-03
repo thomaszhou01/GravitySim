@@ -1,7 +1,7 @@
 #include <planet.h>
 
-Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass) {
-	std::vector<float> verticesTemp = generateSphere(20, 20, 1);
+Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass, int radius) {
+	std::vector<float> verticesTemp = generateSphere(20, 20, radius);
 	vertices = new float[verticesTemp.size()];
 	verticesSize = verticesTemp.size();
 
@@ -10,7 +10,7 @@ Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass) {
 	}
 
 	this->position = pos;
-	this->direction = glm::normalize(dir);
+	this->direction = glm::normalize(dir) * 5.0f;
 	this->stationary = stationary;
 	this->mass = mass;
 }
@@ -35,23 +35,27 @@ int Planet::getMass() {
 	return mass;
 }
 
-void Planet::applyPhysics(std::vector<Planet*> others) {
-	float gravitationalConstant = 6.67430e-10;
-	for (int i = 0; i < others.size(); i++) {
-		if (others[i] != this) {
-			glm::vec3 dist = others[i]->getPosition() - position;
-			glm::vec3 attractionDir = glm::normalize(dist);
-			float magnitude = (gravitationalConstant * others[i]->getMass() * mass) / (glm::length(dist) * glm::length(dist));
-			attractionDir *= magnitude;
-			direction += attractionDir;
-
-		}
-	}
-	position += direction * 0.1f;
+void Planet::applyPhysics(std::vector<Planet*>& otherPlanets, std::vector<Planet*>& otherSuns) {
+	calcPhysics(otherPlanets);
+	calcPhysics(otherSuns);
+	position += direction * 0.2f;
 }
 
 Planet::~Planet() {
 	delete[] vertices;
+}
+
+void Planet::calcPhysics(std::vector<Planet*>& other) {
+	float gravitationalConstant = 6.67430e-10;
+	for (int i = 0; i < other.size(); i++) {
+		if (other[i] != this) {
+			glm::vec3 dist = other[i]->getPosition() - position;
+			glm::vec3 attractionDir = glm::normalize(dist);
+			float magnitude = (gravitationalConstant * other[i]->getMass() * mass) / (glm::length(dist) * glm::length(dist));
+			attractionDir *= magnitude;
+			direction += attractionDir;
+		}
+	}
 }
 
 std::vector<float> Planet::generateSphere(int latLines, int longLines, float radius) {

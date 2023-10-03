@@ -157,6 +157,7 @@
   <ItemGroup>
     <None Include="assets\shader.fs" />
     <None Include="assets\shader.vs" />
+    <None Include="assets\shaderSun.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,7 +2,7 @@
 
 int main()
 {
-	Simulator gravitySim{ 1600, 1600 };
+	Simulator gravitySim{ 800, 800 };
 	gravitySim.setupSim();
 	gravitySim.runSim();
 	gravitySim.endSim();
