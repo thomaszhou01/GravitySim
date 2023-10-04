@@ -4,7 +4,7 @@ Renderer::Renderer() {
 	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
-void Renderer::render(Planet* p, std::vector<Planet*> suns, Camera& cam) {
+void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) {
 	Shader* temp;
 	if (!p->getStationary()) {
 		temp = shader;
@@ -43,13 +43,25 @@ void Renderer::render(Planet* p, std::vector<Planet*> suns, Camera& cam) {
 	temp->setMat4("view", view);
 	temp->setVec3("viewPos", cam.Position);
 
-
-
-
-
 	glBindVertexArray(VAO);
 	glBufferData(GL_ARRAY_BUFFER, p->getVerticesSize() * sizeof(float), &(p->getVertices())[0], GL_STATIC_DRAW);
 	glDrawArrays(GL_TRIANGLES, 0, p->getVerticesSize() / 8);
+}
+
+void Renderer::renderUI(Camera& cam) {
+	glDepthFunc(GL_LEQUAL);
+	skyboxShader->use();
+	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)800 / (float)800, 0.1f, 10000.0f);
+	glm::mat4 view = glm::mat4(glm::mat3(cam.GetViewMatrix())); // remove translation from the view matrix
+	skyboxShader->setMat4("view", view);
+	skyboxShader->setMat4("projection", projection);
+	// skybox cube
+	glBindVertexArray(UIVAO);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+	glDrawArrays(GL_TRIANGLES, 0, 36);
+	glBindVertexArray(0);
+	glDepthFunc(GL_LESS);
 }
 
 Renderer::~Renderer() {
@@ -58,24 +70,43 @@ Renderer::~Renderer() {
 }
 
 void Renderer::init() {
-	unsigned int VBO, EBO;
+	unsigned int UIVBO;
+	glGenVertexArrays(1, &UIVAO);
+	glGenBuffers(1, &UIVBO);
+	glBindVertexArray(UIVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, UIVBO);
+	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), textureLoader.getSkyboxVertices(), GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
+	std::vector<std::string> faces
+	{
+		"assets/resources/right.jpg",
+		"assets/resources/left.jpg",
+		"assets/resources/top.jpg",
+		"assets/resources/bottom.jpg",
+		"assets/resources/front.jpg",
+		"assets/resources/back.jpg",
+	};
+	cubemapTexture = textureLoader.loadCubemap(faces);
+
+	unsigned int VBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
 	glBindVertexArray(VAO);
-
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	//position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	//normal
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	//texture
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+	
 
-	shader = new Shader("assets/shader.vs", "assets/shader.fs");
-	shaderSun = new Shader("assets/shader.vs", "assets/shaderSun.fs");
+	shader = new Shader("assets/shaders/shader.vs", "assets/shaders/shader.fs");
+	shaderSun = new Shader("assets/shaders/shader.vs", "assets/shaders/shaderSun.fs");
+	skyboxShader = new Shader("assets/shaders/skyboxShader.vs", "assets/shaders/skyboxShader.fs");
 }

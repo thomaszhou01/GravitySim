@@ -142,7 +142,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\planet.cpp" />
     <ClCompile Include="src\renderer.cpp" />
-    <ClCompile Include="src\shader.cpp" />
+    <ClCompile Include="src\resourceLoader.cpp" />
     <ClCompile Include="src\simulator.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
   </ItemGroup>
@@ -150,14 +150,16 @@
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\planet.h" />
     <ClInclude Include="include\renderer.h" />
-    <ClInclude Include="include\shader.h" />
+    <ClInclude Include="include\resourceLoader.h" />
     <ClInclude Include="include\simulator.h" />
     <ClInclude Include="include\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="assets\shader.fs" />
-    <None Include="assets\shader.vs" />
-    <None Include="assets\shaderSun.fs" />
+    <None Include="assets\shaders\shader.fs" />
+    <None Include="assets\shaders\shader.vs" />
+    <None Include="assets\shaders\shaderSun.fs" />
+    <None Include="assets\shaders\skyboxShader.fs" />
+    <None Include="assets\shaders\skyboxShader.vs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

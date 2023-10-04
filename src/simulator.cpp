@@ -55,11 +55,12 @@ void Simulator::updateAndRender() {
 
 	//render
 	for (int i = 0; i < planets.size(); i++) {
-		renderer->render(planets[i], suns, *camera);
+		renderer->renderPlanets(planets[i], suns, *camera);
 	}
 	for (int i = 0; i < suns.size(); i++) {
-		renderer->render(suns[i], suns, *camera);
+		renderer->renderPlanets(suns[i], suns, *camera);
 	}
+	renderer->renderUI(*camera);
 }
 
 void Simulator::spawnPlanet() {
@@ -75,7 +76,7 @@ void Simulator::initOpenGL() {
 	window = glfwCreateWindow(screenW, screenH, "Gravity Simulation", NULL, NULL);
 	if (window == NULL)
 	{
-		std::cout << "Failed to create GLFW window" << std::endl;
+		std::cerr << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 	}
 	glfwMakeContextCurrent(window);
@@ -86,7 +87,7 @@ void Simulator::initOpenGL() {
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
+		std::cerr << "Failed to initialize GLAD" << std::endl;
 	}
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);

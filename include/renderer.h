@@ -3,7 +3,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <planet.h>
-#include <shader.h>
+#include <resourceLoader.h>
 #include <camera.h>
 
 #include <glm/glm.hpp>
@@ -14,12 +14,16 @@
 class Renderer {
 public:
 	Renderer();
-	void render(Planet* p, std::vector<Planet*> suns, Camera& cam);
+	void renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam);
+	void renderUI(Camera& cam);
 	~Renderer();
 private:
 	void init();
-	void addLight();
 	unsigned int VAO;
+	unsigned int UIVAO;
+	unsigned int cubemapTexture;
+	TextureLoader textureLoader;
 	Shader* shader;
 	Shader* shaderSun;
+	Shader* skyboxShader;
 };

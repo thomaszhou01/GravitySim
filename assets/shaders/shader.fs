@@ -40,7 +40,7 @@ void main() {
     for (int i = 0; i < numLights; i++){
         result += calcPointLights(light[i], norm, FragPos, viewDir);
     }
-    FragColor = vec4(0.4, 0.2, 0.2, 1.0);
+
     FragColor = vec4(result, 1.0);
 } 
 
