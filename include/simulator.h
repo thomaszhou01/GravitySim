@@ -19,6 +19,7 @@ public:
 private:
 	int screenW;
 	int screenH;
+	bool paused;
 	static bool firstMouse;
 	static float lastX;
 	static float lastY;
@@ -37,4 +38,5 @@ private:
 	static void frameSizeCallback(GLFWwindow* window, int width, int height);
 	static void mouseCallback(GLFWwindow* window, double xposIn, double yposIn);
 	static void scrollCallback(GLFWwindow* window, double xoffset, double yoffset);
+	static void mouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
 };

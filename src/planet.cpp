@@ -15,18 +15,6 @@ Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass, int radi
 	this->mass = mass;
 }
 
-float* Planet::getVertices() {
-	return vertices;
-}
-
-int Planet::getVerticesSize() {
-	return verticesSize;
-}
-
-glm::vec3 Planet::getPosition() {
-	return position;
-}
-
 bool Planet::getStationary() {
 	return stationary;
 }
@@ -66,7 +54,7 @@ std::vector<float> Planet::generateSphere(int latLines, int longLines, float rad
 
 	vecPositions[0] = glm::vec3(0, radius, 0);
 	vecNormals[0] = glm::vec3(0, 1, 0);
-	textureCoords[0] = glm::vec2(0, 1);
+	textureCoords[0] = glm::vec2(0, 0);
 
 	vecPositions[totalVertices - 1] = glm::vec3(0, -radius, 0);
 	vecNormals[totalVertices - 1] = glm::vec3(0, -1, 0);
@@ -84,7 +72,9 @@ std::vector<float> Planet::generateSphere(int latLines, int longLines, float rad
 			float c = cos(phi);
 			vecPositions[i] = glm::vec3((c * cos(theta)), sin(phi), (c * sin(theta))) * radius;
 			vecNormals[i] = glm::normalize(vecPositions[i]);
-			textureCoords[i] = glm::vec2(0, 0);
+			float r1 = ((float)rand() / (RAND_MAX)) / 10.0;
+			float r2 = ((float)rand() / (RAND_MAX)) / 10.0;
+			textureCoords[i] = glm::vec2(r1, r2);
 			i++;
 		}
 	}
@@ -149,7 +139,7 @@ std::vector<float> Planet::generateSphere(int latLines, int longLines, float rad
 			if (k == 0) {
 				temp = pole;
 			}
-			else if(k == 2) {
+			else if (k == 2) {
 				temp += 1;
 			}
 			meshData.push_back(vecPositions[temp].x);

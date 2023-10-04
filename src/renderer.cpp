@@ -10,8 +10,8 @@ void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) 
 		temp = shader;
 		temp->use();
 		temp->setInt("numLights", suns.size());
-		temp->setVec3("material.ambient", 1.0f, 0.5f, 0.31f);
-		temp->setVec3("material.diffuse", 1.0f, 0.5f, 0.31f);
+		temp->setVec3("material.ambient", 0.5f, 0.5f, 0.5f);
+		temp->setVec3("material.diffuse", 0.5f, 0.5f, 0.5f);
 		temp->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		temp->setFloat("material.shininess", 64.0f);
 		for (int i = 0; i < suns.size(); i++) {

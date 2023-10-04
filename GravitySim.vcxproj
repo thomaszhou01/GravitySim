@@ -141,6 +141,7 @@
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\planet.cpp" />
+    <ClCompile Include="src\renderedObject.cpp" />
     <ClCompile Include="src\renderer.cpp" />
     <ClCompile Include="src\resourceLoader.cpp" />
     <ClCompile Include="src\simulator.cpp" />
@@ -149,6 +150,7 @@
   <ItemGroup>
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\planet.h" />
+    <ClInclude Include="include\renderedObject.h" />
     <ClInclude Include="include\renderer.h" />
     <ClInclude Include="include\resourceLoader.h" />
     <ClInclude Include="include\simulator.h" />

@@ -49,10 +49,11 @@ Simulator::~Simulator() {
 
 void Simulator::updateAndRender() {
 	//apply new direction to all new objects in simulation
-	for (int i = 0; i < planets.size(); i++) {
-		planets[i]->applyPhysics(planets, suns);
+	if (!paused) {
+		for (int i = 0; i < planets.size(); i++) {
+			planets[i]->applyPhysics(planets, suns);
+		}
 	}
-
 	//render
 	for (int i = 0; i < planets.size(); i++) {
 		renderer->renderPlanets(planets[i], suns, *camera);
@@ -110,15 +111,18 @@ void Simulator::processInput(GLFWwindow* window, float curFrame) {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		camera->ProcessKeyboard(DOWN, deltaTime);
 
-	if (((curFrame - lastSpawnTime) > 0.5 || lastSpawnTime == 0.0) && (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)) {
+	if (((curFrame - lastSpawnTime) > 0.5 || lastSpawnTime == 0.0) && (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)) {
 		lastSpawnTime = curFrame;
 		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
 			Planet* temp = new Planet{ false, camera->Position, camera->Front, 10000, 2 };
 			planets.push_back(temp);
 		}
 		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-			Planet* temp = new Planet{ true, camera->Position + camera->Front*100.0f, camera->Front, 100000000, 10 };
+			Planet* temp = new Planet{ true, camera->Position + camera->Front * 100.0f, camera->Front, 100000000, 10 };
 			suns.push_back(temp);
+		}
+		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+			paused = !paused;
 		}
 	}
 }
