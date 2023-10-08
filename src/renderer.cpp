@@ -62,11 +62,17 @@ void Renderer::renderUI(Camera& cam) {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);
+
+
+
 }
 
 Renderer::~Renderer() {
 	delete shader;
 	delete shaderSun;
+	delete skyboxShader;
+	delete bloomBlur;
+	delete bloomFinal;
 }
 
 void Renderer::init() {
@@ -109,4 +115,6 @@ void Renderer::init() {
 	shader = new Shader("assets/shaders/shader.vs", "assets/shaders/shader.fs");
 	shaderSun = new Shader("assets/shaders/shader.vs", "assets/shaders/shaderSun.fs");
 	skyboxShader = new Shader("assets/shaders/skyboxShader.vs", "assets/shaders/skyboxShader.fs");
+	bloomBlur = new Shader("assets/shaders/bloom.vs", "assets/shaders/bloomBlur.fs");
+	bloomFinal = new Shader("assets/shaders/bloom.vs", "assets/shaders/bloomFinal.fs");
 }

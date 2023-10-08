@@ -26,4 +26,6 @@ private:
 	Shader* shader;
 	Shader* shaderSun;
 	Shader* skyboxShader;
+	Shader* bloomBlur;
+	Shader* bloomFinal;
 };

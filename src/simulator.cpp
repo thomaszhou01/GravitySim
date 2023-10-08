@@ -4,10 +4,14 @@ bool Simulator::firstMouse = false;
 float Simulator::lastX = 0;
 float Simulator::lastY = 0;
 
-Simulator::Simulator(int width, int height) : screenW(width), screenH(height) {
+Simulator::Simulator(int width, int height, int threads) : screenW(width), screenH(height), threadPool{ threads } {
 	deltaTime = 0.0f;
 	lastFrame = 0.0f;
 	lastSpawnTime = 0.0f;
+	fpsTimeDiff = 0.0f;
+	fpsPrevTime = 0.0f;
+	fpsCounter = 0;
+	totalObjects = 0;
 	initOpenGL();
 	renderer = new Renderer();
 	lastX = width / 2.0f;
@@ -19,6 +23,18 @@ void Simulator::runSim() {
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
+
+		fpsTimeDiff = currentFrame - fpsPrevTime;
+		fpsCounter++;
+		if (fpsTimeDiff >= 1.0f / 30.0f) {
+			std::string FPS = std::to_string((1.0 / fpsTimeDiff) * fpsCounter);
+			std::string ms = std::to_string((fpsCounter * fpsTimeDiff) * 1000);
+			std::string title = "Gravity Simulation - " + FPS + "FPS / " + ms + " ms " + std::to_string(totalObjects);
+			glfwSetWindowTitle(window, title.c_str());
+			fpsPrevTime = currentFrame;
+			fpsCounter = 0;
+		}
+
 
 		// renderING
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -51,8 +67,10 @@ void Simulator::updateAndRender() {
 	//apply new direction to all new objects in simulation
 	if (!paused) {
 		for (int i = 0; i < planets.size(); i++) {
-			planets[i]->applyPhysics(planets, suns);
+			//planets[i]->applyPhysics(planets, suns);
+			threadPool.addTask([this, i] {planets[i]->applyPhysics(planets, suns); });
 		}
+		threadPool.waitForTasks();
 	}
 	//render
 	for (int i = 0; i < planets.size(); i++) {
@@ -92,6 +110,7 @@ void Simulator::initOpenGL() {
 	}
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
+	glEnable(GL_CULL_FACE);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
@@ -111,15 +130,17 @@ void Simulator::processInput(GLFWwindow* window, float curFrame) {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		camera->ProcessKeyboard(DOWN, deltaTime);
 
-	if (((curFrame - lastSpawnTime) > 0.5 || lastSpawnTime == 0.0) && (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)) {
+	if (((curFrame - lastSpawnTime) > 0.1 || lastSpawnTime == 0.0) && (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)) {
 		lastSpawnTime = curFrame;
 		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
 			Planet* temp = new Planet{ false, camera->Position, camera->Front, 10000, 2 };
 			planets.push_back(temp);
+			totalObjects++;
 		}
 		if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
 			Planet* temp = new Planet{ true, camera->Position + camera->Front * 100.0f, camera->Front, 100000000, 10 };
 			suns.push_back(temp);
+			totalObjects++;
 		}
 		if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
 			paused = !paused;

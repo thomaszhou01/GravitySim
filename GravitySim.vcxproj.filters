@@ -42,6 +42,15 @@
     <ClCompile Include="src\renderedObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\threadPool\threadPool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\threadPool\tasksQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\threadPool\worker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\camera.h">
@@ -65,6 +74,15 @@
     <ClInclude Include="include\renderedObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\threadPool\threadPool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\threadPool\worker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\threadPool\tasksQueue.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\shader.fs">
@@ -80,6 +98,15 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="assets\shaders\skyboxShader.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\bloomBlur.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\bloomFinal.fs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\bloom.vs">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

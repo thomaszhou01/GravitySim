@@ -24,7 +24,7 @@ int Planet::getMass() {
 }
 
 void Planet::applyPhysics(std::vector<Planet*>& otherPlanets, std::vector<Planet*>& otherSuns) {
-	calcPhysics(otherPlanets);
+	//calcPhysics(otherPlanets);
 	calcPhysics(otherSuns);
 	position += direction * 0.2f;
 }
@@ -44,6 +44,10 @@ void Planet::calcPhysics(std::vector<Planet*>& other) {
 			direction += attractionDir;
 		}
 	}
+}
+
+void Planet::test(int i) {
+	std::cout << i;
 }
 
 std::vector<float> Planet::generateSphere(int latLines, int longLines, float radius) {
@@ -85,9 +89,15 @@ std::vector<float> Planet::generateSphere(int latLines, int longLines, float rad
 
 	for (int j = 0; j < longLines; j++) {
 		for (int k = 0; k < 3; k++) {
-			int temp = j + k;
+			int temp = j;
 			if (k == 0) {
 				temp = 0;
+			}
+			else if (k == 1) {
+				temp += 2;
+			}
+			else {
+				temp += 1;
 			}
 			meshData.push_back(vecPositions[temp].x);
 			meshData.push_back(vecPositions[temp].y);

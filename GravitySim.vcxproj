@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -146,6 +146,9 @@
     <ClCompile Include="src\resourceLoader.cpp" />
     <ClCompile Include="src\simulator.cpp" />
     <ClCompile Include="src\stb_image.cpp" />
+    <ClCompile Include="src\threadPool\tasksQueue.cpp" />
+    <ClCompile Include="src\threadPool\threadPool.cpp" />
+    <ClCompile Include="src\threadPool\worker.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\camera.h" />
@@ -155,8 +158,14 @@
     <ClInclude Include="include\resourceLoader.h" />
     <ClInclude Include="include\simulator.h" />
     <ClInclude Include="include\stb_image.h" />
+    <ClInclude Include="include\threadPool\tasksQueue.h" />
+    <ClInclude Include="include\threadPool\threadPool.h" />
+    <ClInclude Include="include\threadPool\worker.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="assets\shaders\bloom.vs" />
+    <None Include="assets\shaders\bloomBlur.fs" />
+    <None Include="assets\shaders\bloomFinal.fs" />
     <None Include="assets\shaders\shader.fs" />
     <None Include="assets\shaders\shader.vs" />
     <None Include="assets\shaders\shaderSun.fs" />
