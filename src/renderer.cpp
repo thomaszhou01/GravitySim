@@ -14,6 +14,7 @@ void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) 
 		temp->setVec3("material.diffuse", 0.5f, 0.5f, 0.5f);
 		temp->setVec3("material.specular", 0.5f, 0.5f, 0.5f);
 		temp->setFloat("material.shininess", 64.0f);
+		//lighting
 		for (int i = 0; i < suns.size(); i++) {
 			std::string num = std::to_string(i);
 

@@ -24,7 +24,7 @@ int Planet::getMass() {
 }
 
 void Planet::applyPhysics(std::vector<Planet*>& otherPlanets, std::vector<Planet*>& otherSuns) {
-	//calcPhysics(otherPlanets);
+	calcPhysics(otherPlanets);
 	calcPhysics(otherSuns);
 	position += direction * 0.2f;
 }
