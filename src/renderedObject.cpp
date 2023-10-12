@@ -1,8 +1,6 @@
 #include <renderedObject.h>
 
-RenderedObject::RenderedObject() {
-
-}
+RenderedObject::RenderedObject() {}
 
 float* RenderedObject::getVertices() {
 	return vertices;

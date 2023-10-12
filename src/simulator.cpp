@@ -59,7 +59,12 @@ void Simulator::endSim() {
 }
 
 Simulator::~Simulator() {
-	delete renderer;
+	for (auto i : planets) {
+		delete i;
+	}
+	for (auto i : suns) {
+		delete i;
+	}
 	delete camera;
 }
 
@@ -82,6 +87,7 @@ void Simulator::updateAndRender() {
 	}
 	renderer->renderUI(*camera);
 	renderer->frameBufferFin();
+	renderer->frameBufferRender();
 }
 
 void Simulator::spawnPlanet() {

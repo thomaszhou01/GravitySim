@@ -18,6 +18,7 @@ public:
 	void renderUI(Camera& cam);
 	void frameBufferInit();
 	void frameBufferFin();
+	void frameBufferRender();
 	~Renderer();
 private:
 	void init();

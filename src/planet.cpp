@@ -30,7 +30,6 @@ void Planet::applyPhysics(std::vector<Planet*>& otherPlanets, std::vector<Planet
 }
 
 Planet::~Planet() {
-	delete[] vertices;
 }
 
 void Planet::calcPhysics(std::vector<Planet*>& other) {
