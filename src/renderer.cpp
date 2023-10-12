@@ -1,7 +1,6 @@
 #include <renderer.h>
-Renderer::Renderer() {
+Renderer::Renderer(int screenWidth, int screenHeight) : screenWidth{ screenWidth }, screenHeight{ screenHeight } {
 	this->init();
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) {
@@ -38,7 +37,7 @@ void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, p->getPosition());
 	temp->setMat4("model", model);
-	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)800 / (float)800, 0.1f, 10000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 10000.0f);
 	glm::mat4 view = cam.GetViewMatrix();
 	temp->setMat4("projection", projection);
 	temp->setMat4("view", view);
@@ -50,9 +49,10 @@ void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) 
 }
 
 void Renderer::renderUI(Camera& cam) {
+	
 	glDepthFunc(GL_LEQUAL);
 	skyboxShader->use();
-	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)800 / (float)800, 0.1f, 10000.0f);
+	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 10000.0f);
 	glm::mat4 view = glm::mat4(glm::mat3(cam.GetViewMatrix())); // remove translation from the view matrix
 	skyboxShader->setMat4("view", view);
 	skyboxShader->setMat4("projection", projection);
@@ -64,8 +64,26 @@ void Renderer::renderUI(Camera& cam) {
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);
 
+}
 
+void Renderer::frameBufferInit() {
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+	glEnable(GL_DEPTH_TEST);
 
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void Renderer::frameBufferFin() {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+
+	frameBufferShader->use();
+	glBindVertexArray(quadVAO);
+	glDisable(GL_DEPTH_TEST);
+	glBindTexture(GL_TEXTURE_2D, textureFBO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 Renderer::~Renderer() {
@@ -77,6 +95,28 @@ Renderer::~Renderer() {
 }
 
 void Renderer::init() {
+	float quadVertices[] = {
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		-1.0f, -1.0f,  0.0f, 0.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+
+		-1.0f,  1.0f,  0.0f, 1.0f,
+		 1.0f, -1.0f,  1.0f, 0.0f,
+		 1.0f,  1.0f,  1.0f, 1.0f
+	};
+
+
+	unsigned int quadVBO;
+	glGenVertexArrays(1, &quadVAO);
+	glGenBuffers(1, &quadVBO);
+	glBindVertexArray(quadVAO);
+	glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
 	unsigned int UIVBO;
 	glGenVertexArrays(1, &UIVAO);
 	glGenBuffers(1, &UIVBO);
@@ -84,18 +124,8 @@ void Renderer::init() {
 	glBindBuffer(GL_ARRAY_BUFFER, UIVBO);
 	glBufferData(GL_ARRAY_BUFFER, 108 * sizeof(float), textureLoader.getSkyboxVertices(), GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
+	//only position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-
-	std::vector<std::string> faces
-	{
-		"assets/resources/right.jpg",
-		"assets/resources/left.jpg",
-		"assets/resources/top.jpg",
-		"assets/resources/bottom.jpg",
-		"assets/resources/front.jpg",
-		"assets/resources/back.jpg",
-	};
-	cubemapTexture = textureLoader.loadCubemap(faces);
 
 	unsigned int VBO;
 	glGenVertexArrays(1, &VAO);
@@ -111,11 +141,43 @@ void Renderer::init() {
 	//texture
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
+	//framebuffer
+	glGenFramebuffers(1, &FBO);
+	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+
+	glGenTextures(1, &textureFBO);
+	glBindTexture(GL_TEXTURE_2D, textureFBO);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenWidth, screenHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureFBO, 0);
+
+	unsigned int RBO;
+	glGenRenderbuffers(1, &RBO);
+	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO); 
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cerr << "Framebuffer is not complete" << std::endl;
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	
+	std::vector<std::string> faces
+	{
+		"assets/resources/right.jpg",
+		"assets/resources/left.jpg",
+		"assets/resources/top.jpg",
+		"assets/resources/bottom.jpg",
+		"assets/resources/front.jpg",
+		"assets/resources/back.jpg",
+	};
+	cubemapTexture = textureLoader.loadCubemap(faces);
 
 	shader = new Shader("assets/shaders/shader.vs", "assets/shaders/shader.fs");
 	shaderSun = new Shader("assets/shaders/shader.vs", "assets/shaders/shaderSun.fs");
 	skyboxShader = new Shader("assets/shaders/skyboxShader.vs", "assets/shaders/skyboxShader.fs");
 	bloomBlur = new Shader("assets/shaders/bloom.vs", "assets/shaders/bloomBlur.fs");
 	bloomFinal = new Shader("assets/shaders/bloom.vs", "assets/shaders/bloomFinal.fs");
+	frameBufferShader = new Shader("assets/shaders/shaderFBO.vs", "assets/shaders/shaderFBO.fs");
 }

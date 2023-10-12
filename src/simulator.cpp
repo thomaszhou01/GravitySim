@@ -13,9 +13,9 @@ Simulator::Simulator(int width, int height, int threads) : screenW(width), scree
 	fpsCounter = 0;
 	totalObjects = 0;
 	initOpenGL();
-	renderer = new Renderer();
+	renderer = new Renderer(screenW, screenH);
 	lastX = width / 2.0f;
-	height = height / 2.0f;
+	//lastY = height / 2.0f;
 }
 
 void Simulator::runSim() {
@@ -73,6 +73,7 @@ void Simulator::updateAndRender() {
 		threadPool.waitForTasks();
 	}
 	//render
+	renderer->frameBufferInit();
 	for (int i = 0; i < planets.size(); i++) {
 		renderer->renderPlanets(planets[i], suns, *camera);
 	}
@@ -80,6 +81,7 @@ void Simulator::updateAndRender() {
 		renderer->renderPlanets(suns[i], suns, *camera);
 	}
 	renderer->renderUI(*camera);
+	renderer->frameBufferFin();
 }
 
 void Simulator::spawnPlanet() {
@@ -115,6 +117,9 @@ void Simulator::initOpenGL() {
 
 	//fps uncap
 	//glfwSwapInterval(0);
+
+	//mesh view
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void Simulator::processInput(GLFWwindow* window, float curFrame) {

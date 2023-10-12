@@ -109,5 +109,11 @@
     <None Include="assets\shaders\bloom.vs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="assets\shaders\shaderFBO.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\shaderFBO.fs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

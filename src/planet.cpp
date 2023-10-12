@@ -10,7 +10,7 @@ Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass, int radi
 	}
 
 	this->position = pos;
-	this->direction = glm::normalize(dir) * 5.0f;
+	this->direction = glm::normalize(dir) * 2.0f;
 	this->stationary = stationary;
 	this->mass = mass;
 }
@@ -26,7 +26,7 @@ int Planet::getMass() {
 void Planet::applyPhysics(std::vector<Planet*>& otherPlanets, std::vector<Planet*>& otherSuns) {
 	calcPhysics(otherPlanets);
 	calcPhysics(otherSuns);
-	position += direction * 0.2f;
+	position += direction;
 }
 
 Planet::~Planet() {
