@@ -168,8 +168,11 @@
     <None Include="assets\shaders\bloomFinal.fs" />
     <None Include="assets\shaders\shader.fs" />
     <None Include="assets\shaders\shader.vs" />
+    <None Include="assets\shaders\shaderDeferredLighting.fs" />
+    <None Include="assets\shaders\shaderDeferredLighting.vs" />
     <None Include="assets\shaders\shaderFBO.fs" />
     <None Include="assets\shaders\shaderFBO.vs" />
+    <None Include="assets\shaders\shaderGeometry.fs" />
     <None Include="assets\shaders\shaderSun.fs" />
     <None Include="assets\shaders\skyboxShader.fs" />
     <None Include="assets\shaders\skyboxShader.vs" />

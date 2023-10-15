@@ -45,15 +45,12 @@ void Planet::calcPhysics(std::vector<Planet*>& other) {
 	}
 }
 
-void Planet::test(int i) {
-	std::cout << i;
-}
 
 std::vector<float> Planet::generateSphere(int latLines, int longLines, float radius) {
 	int totalVertices = latLines * (longLines + 1) + 2;
-	glm::vec3* vecPositions = new glm::vec3[totalVertices];
-	glm::vec3* vecNormals = new glm::vec3[totalVertices];
-	glm::vec2* textureCoords = new glm::vec2[totalVertices];
+	std::vector<glm::vec3> vecPositions(totalVertices);
+	std::vector<glm::vec3> vecNormals(totalVertices);
+	std::vector<glm::vec2> textureCoords(totalVertices);
 
 	vecPositions[0] = glm::vec3(0, radius, 0);
 	vecNormals[0] = glm::vec3(0, 1, 0);

@@ -66,28 +66,46 @@ Simulator::~Simulator() {
 		delete i;
 	}
 	delete camera;
+	delete renderer;
 }
 
 void Simulator::updateAndRender() {
 	//apply new direction to all new objects in simulation
-	if (!paused) {
+	/*if (!paused) {
 		for (int i = 0; i < planets.size(); i++) {
-			//planets[i]->applyPhysics(planets, suns);
 			threadPool.addTask([this, i] {planets[i]->applyPhysics(planets, suns); });
 		}
 		threadPool.waitForTasks();
-	}
-	//render
+	}*/
+	////render
+	//renderer->frameBufferInit();
+	//for (int i = 0; i < planets.size(); i++) {
+	//	renderer->renderPlanets(planets[i], suns, *camera);
+	//}
+	//for (int i = 0; i < suns.size(); i++) {
+	//	renderer->renderPlanets(suns[i], suns, *camera);
+	//}
+	//renderer->renderUI(*camera);
+	//renderer->frameBufferFin();
+	//renderer->frameBufferRender();
+
+
+
+	//deferred
 	renderer->frameBufferInit();
 	for (int i = 0; i < planets.size(); i++) {
-		renderer->renderPlanets(planets[i], suns, *camera);
-	}
-	for (int i = 0; i < suns.size(); i++) {
-		renderer->renderPlanets(suns[i], suns, *camera);
+		//renderer->renderPlanets(planets[i], suns, *camera);
+		renderer->renderPlanetsDeferred(planets[i], *camera);
 	}
 	renderer->renderUI(*camera);
 	renderer->frameBufferFin();
+	renderer->renderLighting(suns, *camera);
 	renderer->frameBufferRender();
+
+	for (int i = 0; i < suns.size(); i++) {
+		renderer->renderPlanets(suns[i], suns, *camera);
+	}
+
 }
 
 void Simulator::spawnPlanet() {
@@ -117,9 +135,9 @@ void Simulator::initOpenGL() {
 		std::cerr << "Failed to initialize GLAD" << std::endl;
 	}
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	/*glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);*/
 	glEnable(GL_CULL_FACE);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	//fps uncap
 	//glfwSwapInterval(0);

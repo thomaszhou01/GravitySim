@@ -12,7 +12,6 @@ class Planet : public RenderedObject{
 public:
 	Planet(bool stationary = true, glm::vec3 pos = glm::vec3(0, 0, 0), glm::vec3 dir = glm::vec3(0, 0, 0), int mass = 100, int radius = 1);
 	void applyPhysics(std::vector<Planet*>& otherPlanets, std::vector<Planet*>& otherSuns);
-	void test(int i);
 	bool getStationary();
 	int getMass();
 	~Planet();

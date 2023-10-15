@@ -15,7 +15,9 @@ class Renderer {
 public:
 	Renderer(int screenWidth, int screenHeight);
 	void renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam);
+	void renderPlanetsDeferred(Planet* p, Camera& cam);
 	void renderUI(Camera& cam);
+	void renderLighting(std::vector<Planet*> suns, Camera& cam);
 	void frameBufferInit();
 	void frameBufferFin();
 	void frameBufferRender();
@@ -30,6 +32,9 @@ private:
 	unsigned int quadVAO;
 	unsigned int cubemapTexture;
 	unsigned int textureFBO;
+	unsigned int gPosition;
+	unsigned int gNormal;
+	unsigned int gAlbedoSpec;
 	TextureLoader textureLoader;
 	Shader* shader;
 	Shader* shaderSun;
@@ -37,4 +42,6 @@ private:
 	Shader* bloomBlur;
 	Shader* bloomFinal;
 	Shader* frameBufferShader;
+	Shader* deferredGeo;
+	Shader* deferredLighting;
 };

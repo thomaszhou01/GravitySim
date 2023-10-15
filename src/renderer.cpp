@@ -48,6 +48,25 @@ void Renderer::renderPlanets(Planet* p, std::vector<Planet*> suns, Camera& cam) 
 	glDrawArrays(GL_TRIANGLES, 0, p->getVerticesSize() / 8);
 }
 
+void Renderer::renderPlanetsDeferred(Planet* p, Camera& cam) {
+	deferredGeo->use();
+	deferredGeo->setVec3("colour", 1.0f, 1.0f, 1.0f);
+	deferredGeo->setFloat("albedo", 1.0f);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, p->getPosition());
+	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 10000.0f);
+	glm::mat4 view = cam.GetViewMatrix();
+
+	deferredGeo->setMat4("model", model);
+	deferredGeo->setMat4("projection", projection);
+	deferredGeo->setMat4("view", view);
+
+	glBindVertexArray(VAO);
+	glBufferData(GL_ARRAY_BUFFER, p->getVerticesSize() * sizeof(float), &(p->getVertices())[0], GL_STATIC_DRAW);
+	glDrawArrays(GL_TRIANGLES, 0, p->getVerticesSize() / 8);
+}
+
 void Renderer::renderUI(Camera& cam) {
 	
 	glDepthFunc(GL_LEQUAL);
@@ -63,30 +82,57 @@ void Renderer::renderUI(Camera& cam) {
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 	glBindVertexArray(0);
 	glDepthFunc(GL_LESS);
+}
 
+void Renderer::renderLighting(std::vector<Planet*> suns, Camera& cam) {
+	deferredLighting->use();
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gPosition);
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, gNormal);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+	deferredLighting->setInt("gPosition", 0);
+	deferredLighting->setInt("gNormal", 1);
+	deferredLighting->setInt("gAlbedoSpec", 2);
+	deferredLighting->setInt("numLights", suns.size());
+	for (unsigned int i = 0; i < suns.size(); i++)
+	{
+		deferredLighting->setVec3("lights[" + std::to_string(i) + "].Position", suns[i]->getPosition());
+		deferredLighting->setVec3("lights[" + std::to_string(i) + "].Color", glm::vec3(0.5f, 0.5f, 0.5f));
+		const float linear = 0.0014f;
+		const float quadratic = 0.000007f;
+		deferredLighting->setFloat("lights[" + std::to_string(i) + "].Linear", linear);
+		deferredLighting->setFloat("lights[" + std::to_string(i) + "].Quadratic", quadratic);
+	}
+	deferredLighting->setVec3("viewPos", cam.Position);
 }
 
 void Renderer::frameBufferInit() {
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 	glEnable(GL_DEPTH_TEST);
-
-	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void Renderer::frameBufferFin() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDisable(GL_DEPTH_TEST);
 }
 
 void Renderer::frameBufferRender() {
-	frameBufferShader->use();
+	//without deferred rendering
+	/*frameBufferShader->use();
+	glBindTexture(GL_TEXTURE_2D, textureFBO);*/
+
 	glBindVertexArray(quadVAO);
-	glDisable(GL_DEPTH_TEST);
-	glBindTexture(GL_TEXTURE_2D, textureFBO);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glBindVertexArray(0);
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, FBO);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glBlitFramebuffer(0, 0, screenWidth, screenHeight, 0, 0, screenWidth, screenHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 Renderer::~Renderer() {
@@ -96,6 +142,8 @@ Renderer::~Renderer() {
 	delete bloomBlur;
 	delete bloomFinal;
 	delete frameBufferShader;
+	delete deferredGeo;
+	delete deferredLighting;
 }
 
 void Renderer::init() {
@@ -146,23 +194,52 @@ void Renderer::init() {
 	glEnableVertexAttribArray(2);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
+
 	//framebuffer
 	glGenFramebuffers(1, &FBO);
 	glBindFramebuffer(GL_FRAMEBUFFER, FBO);
 
-	glGenTextures(1, &textureFBO);
-	glBindTexture(GL_TEXTURE_2D, textureFBO);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, screenWidth, screenHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	//glGenTextures(1, &textureFBO);
+	//glBindTexture(GL_TEXTURE_2D, textureFBO);
+	////hdr
+	//glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+
+	/*glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glBindTexture(GL_TEXTURE_2D, 0);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureFBO, 0);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureFBO, 0);*/
+
+	// position color buffer
+	glGenTextures(1, &gPosition);
+	glBindTexture(GL_TEXTURE_2D, gPosition);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gPosition, 0);
+	// normal color buffer
+	glGenTextures(1, &gNormal);
+	glBindTexture(GL_TEXTURE_2D, gNormal);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, screenWidth, screenHeight, 0, GL_RGBA, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gNormal, 0);
+	// color + specular color buffer
+	glGenTextures(1, &gAlbedoSpec);
+	glBindTexture(GL_TEXTURE_2D, gAlbedoSpec);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, screenWidth, screenHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gAlbedoSpec, 0);
+
+	unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	glDrawBuffers(3, attachments);
+
 
 	unsigned int RBO;
 	glGenRenderbuffers(1, &RBO);
 	glBindRenderbuffer(GL_RENDERBUFFER, RBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, screenWidth, screenHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO); 
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, screenWidth, screenHeight);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, RBO);
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cerr << "Framebuffer is not complete" << std::endl;
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -184,4 +261,7 @@ void Renderer::init() {
 	bloomBlur = new Shader("assets/shaders/bloom.vs", "assets/shaders/bloomBlur.fs");
 	bloomFinal = new Shader("assets/shaders/bloom.vs", "assets/shaders/bloomFinal.fs");
 	frameBufferShader = new Shader("assets/shaders/shaderFBO.vs", "assets/shaders/shaderFBO.fs");
+
+	deferredGeo = new Shader("assets/shaders/shader.vs", "assets/shaders/shaderGeometry.fs");
+	deferredLighting = new Shader("assets/shaders/shaderDeferredLighting.vs", "assets/shaders/shaderDeferredLighting.fs");	
 }
