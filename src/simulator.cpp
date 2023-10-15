@@ -71,36 +71,23 @@ Simulator::~Simulator() {
 
 void Simulator::updateAndRender() {
 	//apply new direction to all new objects in simulation
-	/*if (!paused) {
+	if (!paused) {
 		for (int i = 0; i < planets.size(); i++) {
 			threadPool.addTask([this, i] {planets[i]->applyPhysics(planets, suns); });
 		}
 		threadPool.waitForTasks();
-	}*/
-	////render
-	//renderer->frameBufferInit();
-	//for (int i = 0; i < planets.size(); i++) {
-	//	renderer->renderPlanets(planets[i], suns, *camera);
-	//}
-	//for (int i = 0; i < suns.size(); i++) {
-	//	renderer->renderPlanets(suns[i], suns, *camera);
-	//}
-	//renderer->renderUI(*camera);
-	//renderer->frameBufferFin();
-	//renderer->frameBufferRender();
+	}
 
-
-
-	//deferred
+	//deferred rendering
 	renderer->frameBufferInit();
 	for (int i = 0; i < planets.size(); i++) {
 		//renderer->renderPlanets(planets[i], suns, *camera);
 		renderer->renderPlanetsDeferred(planets[i], *camera);
 	}
-	renderer->renderUI(*camera);
 	renderer->frameBufferFin();
 	renderer->renderLighting(suns, *camera);
 	renderer->frameBufferRender();
+	renderer->renderUI(*camera);
 
 	for (int i = 0; i < suns.size(); i++) {
 		renderer->renderPlanets(suns[i], suns, *camera);
