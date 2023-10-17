@@ -166,6 +166,8 @@
     <None Include="assets\shaders\bloom.vs" />
     <None Include="assets\shaders\bloomBlur.fs" />
     <None Include="assets\shaders\bloomFinal.fs" />
+    <None Include="assets\shaders\orientationBox.fs" />
+    <None Include="assets\shaders\orientationBox.vs" />
     <None Include="assets\shaders\shader.fs" />
     <None Include="assets\shaders\shader.vs" />
     <None Include="assets\shaders\shaderDeferredLighting.fs" />

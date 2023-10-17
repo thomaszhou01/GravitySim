@@ -81,7 +81,6 @@ void Simulator::updateAndRender() {
 	//deferred rendering
 	renderer->frameBufferInit();
 	for (int i = 0; i < planets.size(); i++) {
-		//renderer->renderPlanets(planets[i], suns, *camera);
 		renderer->renderPlanetsDeferred(planets[i], *camera);
 	}
 	renderer->frameBufferFin();
@@ -90,7 +89,7 @@ void Simulator::updateAndRender() {
 	renderer->renderUI(*camera);
 
 	for (int i = 0; i < suns.size(); i++) {
-		renderer->renderPlanets(suns[i], suns, *camera);
+		renderer->renderSuns(suns[i], *camera);
 	}
 
 }

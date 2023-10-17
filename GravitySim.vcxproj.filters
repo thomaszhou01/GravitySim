@@ -124,5 +124,11 @@
     <None Include="assets\shaders\shaderDeferredLighting.fs">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="assets\shaders\orientationBox.vs">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="assets\shaders\orientationBox.fs">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

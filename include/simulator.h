@@ -18,6 +18,7 @@ public:
 	void runSim();
 	void endSim();
 	~Simulator();
+
 private:
 	int screenW;
 	int screenH;
