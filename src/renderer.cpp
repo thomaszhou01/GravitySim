@@ -67,7 +67,7 @@ void Renderer::renderUI(Camera& cam) {
 	orientationBoxShader->setMat4("model", model);
 	glBindVertexArray(UIVAO);
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, orientationCubeTexture);
 	glDrawArrays(GL_TRIANGLES, 0, 36);
 
 	glBindVertexArray(0);
@@ -235,7 +235,19 @@ void Renderer::init() {
 		"assets/resources/front.jpg",
 		"assets/resources/back.jpg",
 	};
+
+	std::vector<std::string> orientationFaces
+	{
+		"assets/resources/orientationCubeRight.jpg",
+		"assets/resources/orientationCubeLeft.jpg",
+		"assets/resources/orientationCubeTop.jpg",
+		"assets/resources/orientationCubeBottom.jpg",
+		"assets/resources/orientationCubeBack.jpg",
+		"assets/resources/orientationCubeFront.jpg",
+	};
+
 	cubemapTexture = textureLoader.loadCubemap(faces);
+	orientationCubeTexture = textureLoader.loadCubemap(orientationFaces);
 
 	shader = new Shader("assets/shaders/shader.vs", "assets/shaders/shader.fs");
 	shaderSun = new Shader("assets/shaders/shader.vs", "assets/shaders/shaderSun.fs");
