@@ -3,7 +3,6 @@
 #include <mutex>
 #include <atomic>
 #include <queue>
-#include <iostream>
 
 //queue for tasks that need to be completed
 class TasksQueue {
