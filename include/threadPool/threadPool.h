@@ -4,7 +4,7 @@
 #include <threadPool/tasksQueue.h>
 #include <threadPool/worker.h>
 
-//thread pool class
+//thread pool for multithreaded physics calculations
 class ThreadPool {
 	int numThreads;
 	TasksQueue queue;

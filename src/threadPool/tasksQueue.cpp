@@ -24,3 +24,4 @@ void TasksQueue::waitForTasksCompletion(){
 void TasksQueue::wait() {
 	std::this_thread::yield();
 }
+

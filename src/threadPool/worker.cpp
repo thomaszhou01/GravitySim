@@ -24,3 +24,4 @@ void Worker::stop() {
 	workerRunning = false;
 	thread.join();
 }
+

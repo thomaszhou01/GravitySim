@@ -16,3 +16,4 @@ public:
 	Worker(TasksQueue& queue, int id);
 	void stop();
 };
+
