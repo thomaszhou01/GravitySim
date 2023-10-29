@@ -1,6 +1,6 @@
 #include <simulator.h>
 Camera* Simulator::camera = new Camera(glm::vec3(0.0f, 0.0f, 3.0f));
-bool Simulator::firstMouse = false;
+bool Simulator::firstMouse = true;
 float Simulator::lastX = 0;
 float Simulator::lastY = 0;
 
@@ -14,8 +14,6 @@ Simulator::Simulator(int width, int height, int threads) : screenW(width), scree
 	totalObjects = 0;
 	initOpenGL();
 	renderer = new Renderer(screenW, screenH);
-	lastX = width / 2.0f;
-	//lastY = height / 2.0f;
 }
 
 void Simulator::runSim() {
@@ -148,7 +146,7 @@ void Simulator::processInput(GLFWwindow* window, float curFrame) {
 	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
 		camera->ProcessKeyboard(DOWN, deltaTime);
 
-	if (((curFrame - lastSpawnTime) > 0.1 || lastSpawnTime == 0.0) && (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)) {
+	if (((curFrame - lastSpawnTime) > 0.05 || lastSpawnTime == 0.0) && (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)) {
 		lastSpawnTime = curFrame;
 		if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
 			Planet* temp = new Planet{ false, camera->Position, camera->Front, 10000, 2 };

@@ -29,9 +29,12 @@ void Renderer::renderPlanetsDeferred(Planet* p, Camera& cam) {
 	model = glm::translate(model, p->getPosition());
 	glm::mat4 projection = glm::perspective(glm::radians(cam.Zoom), (float)screenWidth / (float)screenHeight, 0.1f, 10000.0f);
 	glm::mat4 view = cam.GetViewMatrix();
+	
+	float speed = glm::length(p->direction);
+	glm::vec3 colour = glm::vec3(0.1) * speed;
 
 	deferredGeo->use();
-	deferredGeo->setVec3("colour", 1.0f, 1.0f, 1.0f);
+	deferredGeo->setVec3("colour", colour);
 	deferredGeo->setFloat("albedo", 1.0f);
 	deferredGeo->setMat4("model", model);
 	deferredGeo->setMat4("projection", projection);

@@ -140,6 +140,8 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\glad.c" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\node.cpp" />
+    <ClCompile Include="src\octTree.cpp" />
     <ClCompile Include="src\planet.cpp" />
     <ClCompile Include="src\renderedObject.cpp" />
     <ClCompile Include="src\renderer.cpp" />
@@ -152,6 +154,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\camera.h" />
+    <ClInclude Include="include\node.h" />
+    <ClInclude Include="include\octTree.h" />
     <ClInclude Include="include\planet.h" />
     <ClInclude Include="include\renderedObject.h" />
     <ClInclude Include="include\renderer.h" />

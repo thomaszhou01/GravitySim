@@ -6,6 +6,7 @@ void TasksQueue::getTask(std::function<void()>& workerTask) {
 	if (tasks.empty()) {
 		return;
 	}
+	//give worker task
 	workerTask = std::move(tasks.front());
 	tasks.pop();
 }

@@ -1,7 +1,7 @@
 #include <planet.h>
 
 Planet::Planet(bool stationary, glm::vec3 pos, glm::vec3 dir, int mass, int radius) {
-	std::vector<float> verticesTemp = generateSphere(20, 20, radius);
+	std::vector<float> verticesTemp = generateSphere(10, 10, radius);
 	vertices = new float[verticesTemp.size()];
 	verticesSize = verticesTemp.size();
 

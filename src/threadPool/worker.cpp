@@ -7,12 +7,12 @@ Worker::Worker(TasksQueue& queue, int id) : queue{ &queue }, id{ id } {
 
 void Worker::run() {
 	while (workerRunning) {
-		//std::cout << id << std::endl;
 		queue->getTask(task);
 		if (task == nullptr) {
 			TasksQueue::wait();
 		}
 		else {
+			//execute task if there is one in queue
 			task();
 			queue->doneTask();
 			task = nullptr;
@@ -23,5 +23,4 @@ void Worker::run() {
 void Worker::stop() {
 	workerRunning = false;
 	thread.join();
-	std::cout << "thread " << id << " ended" << std::endl;
 }
