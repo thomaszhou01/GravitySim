@@ -4,13 +4,16 @@
 #include <threadPool/tasksQueue.h>
 #include <threadPool/worker.h>
 
+//thread pool class
 class ThreadPool {
 	int numThreads;
 	TasksQueue queue;
 	std::vector<Worker> workers;
+
 public:
 	ThreadPool(int numThreads);
 
+	//add task to the queue
 	template<typename Lambda>
 	void addTask(Lambda && task) {
 		queue.addTask(task);
