@@ -15,7 +15,7 @@ public:
 
 	//add task to the queue
 	template<typename Lambda>
-	void addTask(Lambda && task) {
+	void addTask(Lambda&& task) {
 		queue.addTask(task);
 	}
 
