@@ -36,6 +36,7 @@ private:
 	unsigned int gPosition;
 	unsigned int gNormal;
 	unsigned int gAlbedoSpec;
+
 	TextureLoader textureLoader;
 	Shader* shader;
 	Shader* shaderSun;

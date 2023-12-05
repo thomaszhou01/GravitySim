@@ -39,6 +39,7 @@ private:
 	static Camera* camera;
 	Renderer* renderer;
 	ThreadPool threadPool;
+
 	void updateAndRender();
 	void initOpenGL();
 	void spawnPlanet();

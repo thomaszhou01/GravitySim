@@ -14,6 +14,7 @@ Simulator::Simulator(int width, int height, int threads) : screenW(width), scree
 	totalObjects = 0;
 	initOpenGL();
 	renderer = new Renderer(screenW, screenH);
+	paused = false;
 }
 
 void Simulator::runSim() {

@@ -8,12 +8,13 @@
 
 class RenderedObject {
 public:
-	RenderedObject();
 	glm::vec3 position;
 	glm::vec3 rotation;
 	glm::vec3 direction;
 	float* vertices;
 	int verticesSize;
+
+	RenderedObject();
 	float* getVertices();
 	int getVerticesSize();
 	glm::vec3 getPosition();
